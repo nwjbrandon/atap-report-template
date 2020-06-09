@@ -10,9 +10,9 @@ My training schedule is depicted in Table \ref{tab:schedule}. My training schedu
 		Create NLP pipeline to identify conflicts in chatbot dataset & RAM usage and computation time & Jan\\
 		Create mockups of dashboard and conduct user testing  & Intuitive designs & Feb\\
 		Develop dashboard and integrate NLP pipeline in the backend code & Robustness and latency & Mar\\
-		Roll out first version of dashboard for government agencies to use & Robustness and latency & Apr\\
-		Collect user feedback and work on improving the dashboard & Speed and responsiveness & May\\
-		Deploy using Kubernetes and inhouse CI/CD system & Robustness & Jun\\
+		Roll out first version of dashboard on AWS & Robustness and latency & Apr\\
+		Setting migration tools and testing on the dashboard & Robustness and accuracy & May\\
+		Implement pyspark to handle large training datasets and syncing content between dialogflow and dashboard & Scalability & Jun\\
 	\end{tabularx}
 \end{table}
 
@@ -81,3 +81,40 @@ Topic modeling identifies a set of most representative keywords that could help 
 
 \noindent
 Another task I completed was to setup the backend code in Flask for the analytics dashboard. All the endpoints for the backend have been exposed. Sentry is setup to monitor for errors during runtime. PyTest was setup for unit and integration test. SwaggerHub was also setup for document the RestAPIs. RQ and Redis was also setup for the queuing system to run long computation tasks in the background. MongoDB was also setup to store results in the NLP pipeline. The backend code is also dockerized and deployed on AWS.
+
+\subsection{Training Assignments Completed in 4th Month}
+\noindent
+One task I completed was to deploy the application on Kubernetes using AWS EKS. The finished product on the staging environment is shown in Figure \ref{fig:aat-staging}. There were some modications made to the UI to make the dashboard more user friendly and intuitive. The application is deployed on Kubernetes to orchestrate the various Dockers to run the application. I also setup the Kubernetes dashboard to visualize the different resources and services in my Kubernetes cluster. Kubernetes has also help me to scale up and down resources base on the traffic, and update and deploy new images. 
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=450px]{assets/images/aat-staging.png}
+		\caption{Dashboard on Staging Environemnt}
+		\label{fig:aat-staging}
+	\end{center}
+\end{figure}
+
+\noindent
+Another tasks I completed was to setup the regression test using Docker Compose. This allows the integration and unit testing to be containerized so that system requirements and dependencies are tested on the same environment as production's during continuous integration. To determine whether continuous integration is successful, the image for testing is built and run. The exit status of the image after the test is finish is listened to determine whether all tests passed or not.
+
+\subsection{Training Assignments Completed in 5th Month}
+\noindent
+One task I did was to develop the APIs to allow users to migrate the training dataset from FlexAnswer to DialogFlow. The way the data are stored in both platforms are different, and requires some data structures and algorithms, such as Breath First Search and Depth First Search, to group the training dataset into the correct parts of a conversation flow. Besides, there are many edge cases due to poor integrity of the dataset or missing values. Currently, the user first need to upload their DialogFlow chatbot's credentials on the dashboard, shown in \ref{fig:aat-agents}, to later upload and migrate the data from FlexAnswer to DialogFlow.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=450px]{assets/images/aat-agents.png}
+		\caption{Agents Page in Dashboard}
+		\label{fig:aat-agents}
+	\end{center}
+\end{figure}
+
+\noindent
+Another tasks I completed was to setup logging on both the frontend and backend. I used the AWS CloudWatch to log the messages from both frontend and backend to. I found interested libraries, such as winston-cloudwatch for frontend and watchtower for backend to convinently setup a queue system to log the messages without encountering conflicts. The logging had helped one of the team member to debug the deployment error with Nginx which rejects headers with underscores. 
+
+\subsection{Training Assignments Completed in 6th Month}
+\noindent
+One task I did was to build a scalable pipeline that provides the same analysis as the pipeline that I deployed to the Kubernetes cluster. PySpark allows the memory consumed to be distributed; therefore, the analysis can be scalable. I used SparkNLP to extract out the embeddings and performs KMeans with the distance metrics as cosine similarity. The scalable pipeline download the files from AWS S3, reads the dataset, performs similar analyses, and then uploads the files back to AWS S3. The only difference is that it is using PySpark for scalability.
+
+\noindent
+Another tasks I completed was to implement APIs to perform CRUD on the intents, training phrases, entities, and responses. Last month, I made a similar attempt for the intents and training phrases; however, the approach is not production ready and stable. The current changes made is to mark items deleted with a boolean flag instead of actually deleting the item. Secondly, the training phrases are stored a string without its entities. I made the changes to the implementation to support storage of the training phrases with entities.
